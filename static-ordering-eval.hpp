@@ -53,9 +53,6 @@ std::unordered_map<long, long> load_judgements(std::istream& in,
             if (auto pos = idmap.find(title); pos != idmap.end()) {
                 long id = pos->second;
                 judgements[id] = std::max(judgements[id], std::stol(rank));
-            } else {
-                throw std::runtime_error(
-                    "document " + title + " not found in the ordering");
             }
         } else {
             throw std::runtime_error("corrupted judgements file");
