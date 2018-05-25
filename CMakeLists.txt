@@ -7,6 +7,7 @@ include(external/external.cmake)
 add_executable(static-ordering-eval static-ordering-eval.cpp)
 target_link_libraries(static-ordering-eval CLI11::CLI11)
 target_compile_features(static-ordering-eval PRIVATE cxx_std_17)
+install(TARGETS static-ordering-eval DESTINATION bin)
 
 if (SOE_BUILD_TEST)
     set(CMAKE_EXE_LINKER_FLAGS "-pthread")
