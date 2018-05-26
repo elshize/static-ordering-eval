@@ -64,8 +64,11 @@ TEST(load_judgements, trailing_white)
     idmap["T3"] = 2;
     std::istringstream in("T1 2\nT1 1\nT3 5\nT3 6 ");
     auto judgements = load_judgements(in, idmap);
-    EXPECT_EQ(judgements[0], 2);
-    EXPECT_EQ(judgements[2], 6);
+    EXPECT_EQ(judgements.size(), 2);
+    EXPECT_EQ(judgements[0].id, 2);
+    EXPECT_EQ(judgements[0].rank, 6);
+    EXPECT_EQ(judgements[1].id, 0);
+    EXPECT_EQ(judgements[1].rank, 2);
 }
 
 TEST(load_judgements, no_trailing_white)
@@ -77,16 +80,26 @@ TEST(load_judgements, no_trailing_white)
     std::istringstream in("T1 2\nT1 1\nT3 5\nT3 6");
     auto judgements = load_judgements(in, idmap);
     EXPECT_EQ(judgements.size(), 2);
-    EXPECT_EQ(judgements[0], 2);
-    EXPECT_EQ(judgements[2], 6);
+    EXPECT_EQ(judgements[0].id, 2);
+    EXPECT_EQ(judgements[0].rank, 6);
+    EXPECT_EQ(judgements[1].id, 0);
+    EXPECT_EQ(judgements[1].rank, 2);
 }
 
 TEST(eval_ordering, test)
 {
-    std::istringstream sin("T1\nT2\nT3");
-    std::istringstream jin("T1 2\nT1 1\nT3 5\nT3 6");
+    std::istringstream sin("T1\nT2\nT3\nT4");
+    std::istringstream jin("T1 2\nT1 1\nT3 5\nT3 6\nT4 2");
     double score = eval_ordering(jin, sin);
-    EXPECT_NEAR(score, 0.1666667, 0.000001);
+    EXPECT_NEAR(score, 0.5, 0.000001);
+}
+
+TEST(eval_ordering, test2)
+{
+    std::istringstream sin("T1\nT2\nT3\nT4\nT5\nT6");
+    std::istringstream jin("T1 2\nT3 6\nT4 2\nT5 0");
+    double score = eval_ordering(jin, sin);
+    EXPECT_NEAR(score, 0.8, 0.000001);
 }
 
 };  // namespace

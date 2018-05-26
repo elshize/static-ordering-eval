@@ -24,13 +24,19 @@
 //! \author     Michal Siedlaczek
 //! \copyright  MIT License
 
+#include <algorithm>
 #include <iostream>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 struct entry {
     long id;
     long rank;
+};
+
+struct rank_comparator {
+    bool operator()(entry lhs, entry rhs) const { return lhs.rank > rhs.rank; }
 };
 
 std::unordered_map<std::string, long> load_idmap(std::istream& in)
@@ -42,7 +48,7 @@ std::unordered_map<std::string, long> load_idmap(std::istream& in)
     return idmap;
 }
 
-std::unordered_map<long, long> load_judgements(std::istream& in,
+std::vector<entry> load_judgements(std::istream& in,
     std::unordered_map<std::string, long>& idmap)
 {
     std::unordered_map<long, long> judgements;
@@ -58,20 +64,29 @@ std::unordered_map<long, long> load_judgements(std::istream& in,
             throw std::runtime_error("corrupted judgements file");
         }
     }
-    return judgements;
+    std::vector<entry> vec;
+    for (const auto& [id, rank] : judgements) { vec.push_back({id, rank}); }
+    std::sort(vec.begin(), vec.end(), rank_comparator{});
+    return vec;
 }
 
 double eval_ordering(std::istream& jin, std::istream& sin)
 {
+    long pairs_judged = 0;
+    long pairs_intersection = 0;
     auto idmap = load_idmap(sin);
     auto judgements = load_judgements(jin, idmap);
-    auto ndoc = idmap.size();
-    long intersection = 0;
-    for (std::size_t left_id = 0; left_id < ndoc - 1; left_id++) {
-        for (std::size_t right_id = left_id + 1; right_id < ndoc; right_id++) {
-            /* By definition, it's true that S(left_id) > S(right_id). */
-            intersection += judgements[left_id] > judgements[right_id] ? 1 : 0;
+    for (auto left = judgements.begin();
+         left != std::prev(judgements.end());
+         left++)
+    {
+        auto right = std::next(left);
+        for (; right != judgements.end() && left->rank == right->rank; right++)
+        { /* Skip same rank. */ }
+        for (; right != judgements.end(); right++) {
+            pairs_judged++;
+            pairs_intersection += left->id < right->id ? 1 : 0;
         }
     }
-    return (double)intersection / (judgements.size() * (judgements.size() - 1));
+    return (double)pairs_intersection / pairs_judged;
 }
