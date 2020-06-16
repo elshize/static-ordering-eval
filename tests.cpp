@@ -56,34 +56,34 @@ TEST(load_ordering, no_trailing_newline)
     EXPECT_EQ(idmap["T3"], 2);
 }
 
-TEST(load_judgements, trailing_white)
+TEST(load_judgments, trailing_white)
 {
     std::unordered_map<std::string, long> idmap;
     idmap["T1"] = 0;
     idmap["T2"] = 1;
     idmap["T3"] = 2;
     std::istringstream in("T1 2\nT1 1\nT3 5\nT3 6 ");
-    auto judgements = load_judgements(in, idmap);
-    EXPECT_EQ(judgements.size(), 2);
-    EXPECT_EQ(judgements[0].id, 2);
-    EXPECT_EQ(judgements[0].rank, 6);
-    EXPECT_EQ(judgements[1].id, 0);
-    EXPECT_EQ(judgements[1].rank, 2);
+    auto judgments = load_judgments(in, idmap);
+    EXPECT_EQ(judgments.size(), 2);
+    EXPECT_EQ(judgments[0].id, 2);
+    EXPECT_EQ(judgments[0].rank, 6);
+    EXPECT_EQ(judgments[1].id, 0);
+    EXPECT_EQ(judgments[1].rank, 2);
 }
 
-TEST(load_judgements, no_trailing_white)
+TEST(load_judgments, no_trailing_white)
 {
     std::unordered_map<std::string, long> idmap;
     idmap["T1"] = 0;
     idmap["T2"] = 1;
     idmap["T3"] = 2;
     std::istringstream in("T1 2\nT1 1\nT3 5\nT3 6");
-    auto judgements = load_judgements(in, idmap);
-    EXPECT_EQ(judgements.size(), 2);
-    EXPECT_EQ(judgements[0].id, 2);
-    EXPECT_EQ(judgements[0].rank, 6);
-    EXPECT_EQ(judgements[1].id, 0);
-    EXPECT_EQ(judgements[1].rank, 2);
+    auto judgments = load_judgments(in, idmap);
+    EXPECT_EQ(judgments.size(), 2);
+    EXPECT_EQ(judgments[0].id, 2);
+    EXPECT_EQ(judgments[0].rank, 6);
+    EXPECT_EQ(judgments[1].id, 0);
+    EXPECT_EQ(judgments[1].rank, 2);
 }
 
 TEST(eval_ordering, test)

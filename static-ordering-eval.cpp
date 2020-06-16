@@ -32,11 +32,14 @@ int main(int argc, char** argv)
 {
     std::string hfile, sfile;
     CLI::App app{
-        "Evaluate a static document ordering against TREC judgements.\n"
+        "Evaluate a static document ordering against TREC judgments.\n"
         "The only measure implemented so far is pairwise accuracy,\n"
-        "as described in https://dl.acm.org/citation.cfm?id=1135881\n"
+        "as described in https://dl.acm.org/citation.cfm?id=1135881\n\n"
+        "Judgment file: lines of TREC IDs and judgment values, e.g.\n"
+        "\tclueweb09-en0010-40-01313 4\n\n"
+        "Ordering file: newline-delimited TREC IDs\n"
     };
-    app.add_option("judgements", hfile, "File with human judgements", false)
+    app.add_option("judgments", hfile, "File with human judgments", false)
         ->required();
     app.add_option("ordering", sfile, "Ordering to evaluate", false)
         ->required();

@@ -48,24 +48,24 @@ std::unordered_map<std::string, long> load_idmap(std::istream& in)
     return idmap;
 }
 
-std::vector<entry> load_judgements(std::istream& in,
+std::vector<entry> load_judgments(std::istream& in,
     std::unordered_map<std::string, long>& idmap)
 {
-    std::unordered_map<long, long> judgements;
+    std::unordered_map<long, long> judgments;
     std::string title;
     std::string rank;
     while (in >> title) {
         if (in >> rank) {
             if (auto pos = idmap.find(title); pos != idmap.end()) {
                 long id = pos->second;
-                judgements[id] = std::max(judgements[id], std::stol(rank));
+                judgments[id] = std::max(judgments[id], std::stol(rank));
             }
         } else {
-            throw std::runtime_error("corrupted judgements file");
+            throw std::runtime_error("corrupted judgments file");
         }
     }
     std::vector<entry> vec;
-    for (const auto& [id, rank] : judgements) { vec.push_back({id, rank}); }
+    for (const auto& [id, rank] : judgments) { vec.push_back({id, rank}); }
     std::sort(vec.begin(), vec.end(), rank_comparator{});
     return vec;
 }
@@ -75,15 +75,15 @@ double eval_ordering(std::istream& jin, std::istream& sin)
     long pairs_judged = 0;
     long pairs_intersection = 0;
     auto idmap = load_idmap(sin);
-    auto judgements = load_judgements(jin, idmap);
-    for (auto left = judgements.begin();
-         left != std::prev(judgements.end());
+    auto judgments = load_judgments(jin, idmap);
+    for (auto left = judgments.begin();
+         left != std::prev(judgments.end());
          left++)
     {
         auto right = std::next(left);
-        for (; right != judgements.end() && left->rank == right->rank; right++)
+        for (; right != judgments.end() && left->rank == right->rank; right++)
         { /* Skip same rank. */ }
-        for (; right != judgements.end(); right++) {
+        for (; right != judgments.end(); right++) {
             pairs_judged++;
             pairs_intersection += left->id < right->id ? 1 : 0;
         }
